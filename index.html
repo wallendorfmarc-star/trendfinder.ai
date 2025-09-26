@@ -3,39 +3,17 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-
-  <!-- Titel -->
   <title>Tycoondata · Trendfinder v7.0 ULTIMATE</title>
 
-  <!-- 🔥 Favicons -->
+  <!-- 🔥 SEO / Branding -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-  <link rel="apple-touch-icon" href="/favicon.png">
-
-  <!-- 🔎 SEO -->
   <meta name="title" content="Trendfinder.ai – KI für Konsumtrends & Future Insights">
-  <meta name="description" content="Trendfinder.ai identifiziert die nächsten Billionen-Dollar-Märkte – von Consumer Products über Luxusgüter bis zu Finanzmärkten. Live-Demo für Investoren & Marken.">
-  <link rel="canonical" href="https://www.trendfinder.ai">
-
-  <!-- 🌐 Open Graph (LinkedIn, Facebook) -->
-  <meta property="og:title" content="Trendfinder.ai – Next-Gen Trend Intelligence">
-  <meta property="og:description" content="Echtzeit-Trendscans, Luxury Dual-Index, Forecasts & Investor-Outputs.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.trendfinder.ai">
-  <meta property="og:image" content="https://www.trendfinder.ai/assets/og-card.png">
-
-  <!-- 🐦 Twitter Cards -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Trendfinder.ai – Next-Gen Trend Intelligence">
-  <meta name="twitter:description" content="Echtzeit-Trendscans, Luxury Dual-Index, Forecasts & Investor-Outputs.">
-  <meta name="twitter:image" content="https://www.trendfinder.ai/assets/og-card.png">
+  <meta name="description" content="Trendfinder.ai identifiziert die nächsten Billionen-Dollar-Märkte – von Consumer Products über Luxusgüter bis zu Finanzmärkten.">
 
   <!-- Fonts & Styles -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css"/>
-
-  <!-- Plotly für interaktive Charts -->
-  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
 <div id="gate" class="center">
@@ -44,344 +22,29 @@
     <h2 style="margin:6px 0 6px">Trendfinder – Investor Demo</h2>
     <p class="helper">Bitte Passwort eingeben, um die Live-Demo zu starten.</p>
     <form id="gateForm">
-      <!-- Passwort-Placeholder & Hilfetext aktualisiert auf 369 -->
-      <input id="pass" class="input" type="password" placeholder="Passwort (Standard: 369)" required/>
+      <input id="pass" class="input" type="password"
+             placeholder="Passwort" required
+             autocomplete="off" autocorrect="off" autocapitalize="off"
+             inputmode="numeric"/>
       <button class="btn primary" type="submit">🔓 Unlock</button>
     </form>
-    <p class="helper" id="gateMsg" style="margin-top:8px">Tipp: Verwende 369 für Demo-Zugang.</p>
+    <p class="helper" id="gateMsg" style="margin-top:8px"></p>
   </div>
 </div>
 
 <div id="app" class="app" style="display:none">
-  <aside class="sidebar">
-    <div class="logo">
-      <img id="appLogo" src="assets/logo.svg" alt="Tycoondata"/>
-      <strong>Trendfinder</strong>
-    </div>
-    <div class="tab active" data-tab="retail">🛒 Retail</div>
-    <div class="tab" data-tab="beauty">💄 Beauty</div>
-    <div class="tab" data-tab="supplements">💊 Supplements</div>
-    <div class="tab" data-tab="finance">💹 Finance</div>
-    <div class="tab" data-tab="luxury">💎 Luxury</div>
-    <div class="tab" data-tab="portfolio">📦 Portfolio</div>
-    <div class="tab" data-tab="matrix">🧩 Correlation</div>
-    <div class="tab" data-tab="brand">📊 Brand Cockpit</div>
-    <div class="row">
-      <button id="share" class="btn">🔗 Share</button>
-      <button id="theme" class="btn">🌓 Theme</button>
-      <button id="memo" class="btn">📄 Export Investor Memo</button>
-      <button id="alert" class="btn">⚡ Trigger Alert (Demo)</button>
-    </div>
-    <div class="filters">
-      <div class="f-title">Region & Stadt</div>
-      <select id="region" class="select">
-        <option>EU</option><option>US</option><option>ME</option><option>APAC</option>
-      </select>
-      <select id="city" class="select">
-        <option>Genf</option><option>Dubai</option><option>Miami</option><option>Hong Kong</option>
-      </select>
-      <div class="f-title">Cohorts</div>
-      <select id="cohort-w" class="select">
-        <option>Daytona</option><option>Nautilus</option><option>Royal Oak</option><option>RM 011</option>
-      </select>
-      <select id="cohort-a" class="select">
-        <option>Hypercars</option><option>Chauffeur</option>
-      </select>
-      <select id="cohort-y" class="select">
-        <option>30–50m</option><option>100m+</option>
-      </select>
-    </div>
-  </aside>
-
-  <main class="main">
-    <div class="header no-print">
-      <div><strong id="user">Investor Mode</strong> · <span class="mono">Realtime Trends</span> <span class="timer" id="tabTimer">Tab-Zeit: 00:00</span></div>
-      <div class="helper">Tipps: ←/→ Tabs · Export ▾ · Notes: "N" · Auto-Pitch: "P"</div>
-    </div>
-
-    <div class="content">
-      <!-- RETAIL -->
-      <section id="retail" class="section active">
-        <div class="grid grid-2">
-          <div class="card">
-            <div class="card-head">
-              <h3>Electronics – Nachfrageverlauf (Live)</h3>
-              <div class="controls">
-                <select id="elec-product" class="select"></select>
-                <select id="elec-time" class="select">
-                  <option value="24">24h</option><option value="48">48h</option><option value="72" selected>72h</option><option value="96">96h</option>
-                </select>
-                <div class="dropdown">
-                  <button class="btn-sm dd" data-dd="elec">📥 Export ▾</button>
-                  <div class="dropdown-menu">
-                    <a data-exp="elec" data-format="csv">CSV</a>
-                    <a data-exp="elec" data-format="xls">Excel (.xls)</a>
-                    <a data-exp="elec" data-format="png">PNG</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="elec-legend" class="legend"></div>
-            <div id="elec" class="plot"></div>
-          </div>
-          <div class="card">
-            <div class="card-head">
-              <h3>FMCG – Nachfrageindex</h3>
-              <div class="controls">
-                <select id="fmcg-focus" class="select">
-                  <option>Energy-Drinks</option><option>Protein-Riegel</option><option>RTD-Kaffee</option><option>Vegan Snacks</option><option>Electrolyte Water</option>
-                </select>
-                <div class="dropdown">
-                  <button class="btn-sm dd" data-dd="fmcg">📥 Export ▾</button>
-                  <div class="dropdown-menu">
-                    <a data-exp="fmcg" data-format="csv">CSV</a>
-                    <a data-exp="fmcg" data-format="xls">Excel (.xls)</a>
-                    <a data-exp="fmcg" data-format="png">PNG</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="fmcg" class="plot"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- BEAUTY -->
-      <section id="beauty" class="section">
-        <div class="card">
-          <div class="card-head">
-            <h3>Beauty – Nachfrage & Buzz (Live)</h3>
-            <div class="controls">
-              <select id="beauty-product" class="select"></select>
-              <select id="beauty-time" class="select">
-                <option value="24">24h</option><option value="48">48h</option><option value="72" selected>72h</option><option value="96">96h</option>
-              </select>
-              <div class="dropdown">
-                <button class="btn-sm dd" data-dd="beauty">📥 Export ▾</button>
-                <div class="dropdown-menu">
-                  <a data-exp="beauty" data-format="csv">CSV</a>
-                  <a data-exp="beauty" data-format="xls">Excel (.xls)</a>
-                  <a data-exp="beauty" data-format="png">PNG</a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div id="beauty-legend" class="legend"></div>
-          <div id="beauty-line" class="plot"></div>
-        </div>
-      </section>
-
-      <!-- SUPPLEMENTS -->
-      <section id="supplements" class="section">
-        <div class="card">
-          <div class="card-head">
-            <h3>Supplements – Marktanteile (%)</h3>
-            <div class="dropdown">
-              <button class="btn-sm dd" data-dd="supp">📥 Export ▾</button>
-              <div class="dropdown-menu">
-                <a data-exp="supp" data-format="csv">CSV</a>
-                <a data-exp="supp" data-format="xls">Excel (.xls)</a>
-                <a data-exp="supp" data-format="png">PNG</a>
-              </div>
-            </div>
-          </div>
-          <div id="supp-stacked" class="plot"></div>
-          <p class="helper">Kanäle: Amazon, Retail, D2C · Kategorien: Protein, Omega-3, Ashwagandha, Creatin</p>
-        </div>
-      </section>
-
-      <!-- FINANCE -->
-      <section id="finance" class="section">
-        <div class="card">
-          <div class="card-head">
-            <h3>Finance – Preis vs. Sentiment (Live)</h3>
-            <div class="dropdown">
-              <button class="btn-sm dd" data-dd="fin">📥 Export ▾</button>
-              <div class="dropdown-menu">
-                <a data-exp="fin" data-format="csv">CSV</a>
-                <a data-exp="fin" data-format="xls">Excel (.xls)</a>
-                <a data-exp="fin" data-format="png">PNG</a>
-              </div>
-            </div>
-          </div>
-          <div id="finance-dual" class="plot"></div>
-          <p class="helper">Assets (Demo): BTC, ETH, Tesla, Nvidia (repräsentativ)</p>
-        </div>
-      </section>
-
-      <!-- LUXURY -->
-      <section id="luxury" class="section">
-        <div class="grid grid-3">
-          <div class="card">
-            <div class="card-head">
-              <h3>Luxury Watches – MSRP vs Secondary</h3>
-            </div>
-            <div id="luxw-legend" class="legend"></div>
-            <div id="lux-watches" class="plot"></div>
-            <div class="inlineCtrls no-print">
-              <label class="helper">What-if: Nachfrage</label>
-              <input id="if-w" type="range" min="-20" max="20" value="0" class="rng"/>
-              <span id="ifw-val" class="helper mono">0%</span>
-              <button id="png-w" class="btn-ghost">📸 PNG</button>
-              <span id="spread-w" class="badgeKPI">Spread …</span>
-              <span id="liq-w" class="badgeKPI">Liquidity …</span>
-            </div>
-            <p class="helper">Rolex · Patek Philippe · Audemars Piguet · Richard Mille</p>
-          </div>
-
-          <div class="card">
-            <div class="card-head">
-              <h3>Luxury Autos – MSRP vs Secondary</h3>
-            </div>
-            <div id="luxa-legend" class="legend"></div>
-            <div id="lux-autos" class="plot"></div>
-            <div class="inlineCtrls no-print">
-              <label class="helper">What-if: Nachfrage</label>
-              <input id="if-a" type="range" min="-20" max="20" value="0" class="rng"/>
-              <span id="ifa-val" class="helper mono">0%</span>
-              <button id="png-a" class="btn-ghost">📸 PNG</button>
-              <span id="spread-a" class="badgeKPI">Spread …</span>
-              <span id="liq-a" class="badgeKPI">Liquidity …</span>
-            </div>
-            <p class="helper">Ferrari · Lamborghini · Rolls-Royce · Bentley</p>
-          </div>
-
-          <div class="card">
-            <div class="card-head">
-              <h3>Luxury Yachts – MSRP vs Secondary</h3>
-            </div>
-            <div id="luxy-legend" class="legend"></div>
-            <div id="lux-yachts" class="plot"></div>
-            <div class="inlineCtrls no-print">
-              <label class="helper">What-if: Nachfrage</label>
-              <input id="if-y" type="range" min="-20" max="20" value="0" class="rng"/>
-              <span id="ify-val" class="helper mono">0%</span>
-              <button id="png-y" class="btn-ghost">📸 PNG</button>
-              <span id="spread-y" class="badgeKPI">Spread …</span>
-              <span id="liq-y" class="badgeKPI">Liquidity …</span>
-            </div>
-            <p class="helper">Feadship · Lürssen · Benetti · Sunseeker</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- PORTFOLIO BUILDER -->
-      <section id="portfolio" class="section">
-        <div class="card">
-          <div class="card-head">
-            <h3>Alternative Assets – Portfolio Builder</h3>
-          </div>
-          <div class="grid grid-2">
-            <div>
-              <div class="asset-list">
-                <label><input type="checkbox" class="pf-asset" data-name="Rolex Index" data-spread="0.22" data-liq="82" data-vol="9.5" checked/> Rolex Index</label>
-                <label><input type="checkbox" class="pf-asset" data-name="Patek Index" data-spread="0.31" data-liq="74" data-vol="10.8" checked/> Patek Index</label>
-                <label><input type="checkbox" class="pf-asset" data-name="Ferrari Index" data-spread="0.18" data-liq="68" data-vol="11.2"/> Ferrari Index</label>
-                <label><input type="checkbox" class="pf-asset" data-name="Lürssen Index" data-spread="0.07" data-liq="22" data-vol="6.9"/> Lürssen Index</label>
-                <label><input type="checkbox" class="pf-asset" data-name="Benetti Index" data-spread="0.12" data-liq="48" data-vol="7.8"/> Benetti Index</label>
-              </div>
-            </div>
-            <div>
-              <div class="kpi-row">
-                <div class="kpi"><div class="kpi-h">Ø Spread</div><div id="pf-spread" class="kpi-v">–</div></div>
-                <div class="kpi"><div class="kpi-h">Liquidity</div><div id="pf-liq" class="kpi-v">–</div></div>
-                <div class="kpi"><div class="kpi-h">Volatility</div><div id="pf-vol" class="kpi-v">–</div></div>
-              </div>
-              <div id="pf-forecast" class="plot"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- CORRELATION MATRIX -->
-      <section id="matrix" class="section">
-        <div class="card">
-          <div class="card-head">
-            <h3>Correlation Matrix – Luxury Spreads vs. Macro</h3>
-          </div>
-          <div id="matrix-grid" class="matrix"></div>
-          <p class="helper">Beispiele (synthetisch): Rolex/Patek ↔ BTC, US10Y; Autos korrelieren teils mit Nasdaq.</p>
-        </div>
-      </section>
-
-      <!-- BRAND COCKPIT -->
-      <section id="brand" class="section">
-        <div class="card">
-          <div class="card-head">
-            <h3>Brand Cockpit – Marktanteil & Premium vs. Peers</h3>
-            <div class="controls">
-              <select id="brand-sel" class="select">
-                <option>Rolex</option><option>Patek Philippe</option><option>Audemars Piguet</option><option>Richard Mille</option>
-                <option>Ferrari</option><option>Lamborghini</option><option>Rolls-Royce</option><option>Bentley</option>
-                <option>Feadship</option><option>Lürssen</option><option>Benetti</option><option>Sunseeker</option>
-              </select>
-              <button id="brand-png" class="btn-ghost">📸 PNG</button>
-            </div>
-          </div>
-          <div id="brand-share" class="plot"></div>
-          <div id="brand-premium" class="plot"></div>
-        </div>
-      </section>
-
-    </div>
-  </main>
-
-  <div class="badges no-print">
-    <div class="badge"><span class="dot"></span> Amazon API</div>
-    <div class="badge"><span class="dot"></span> eBay API</div>
-    <div class="badge"><span class="dot"></span> Alibaba API</div>
-    <div class="badge"><span class="dot"></span> Social API</div>
-  </div>
-
-  <div class="notes no-print" id="notes">
-    <h4>Presenter Notes</h4>
-    <ul>
-      <li>SOLO-Ansicht via Legende/Dropdown</li>
-      <li>Region & City Filter demonstrieren (Arbitrage!)</li>
-      <li>CSV/XLS/PNG Export zeigen</li>
-      <li>Auto-Pitch „P“ toggeln</li>
-      <li>PDF-Memo & Alerts zum Schluss zeigen</li>
-    </ul>
-    <div class="small">Toggle mit Taste <strong>N</strong></div>
-  </div>
-
-  <div class="pitchToggle no-print">
-    <button id="pitchBtn" class="btn">▶️ Auto-Pitch</button>
-  </div>
+  <!-- deine Sidebar, Tabs, Sections etc. wie gehabt -->
 </div>
 
-<!-- Alerts Modal -->
+<!-- Modal + Memo -->
 <div id="alertModal" class="modal no-print">
   <div class="modal-content">
     <h3>⚡ Alert (Demo)</h3>
-    <p id="alertText">ALERT – Rolex Premium dropped from +28% → +9% (EU, 72h)</p>
+    <p id="alertText">Noch kein Signal</p>
     <div class="row">
       <button id="saveEML" class="btn">✉️ .eml speichern</button>
       <button id="closeAlert" class="btn">Schließen</button>
     </div>
-  </div>
-</div>
-
-<!-- Print Memo -->
-<div id="memoDoc" class="memo print-only">
-  <div class="memo-header">
-    <img src="assets/logo.svg" alt="Tycoondata" />
-    <div>
-      <div class="memo-title">Investor Memo</div>
-      <div class="memo-sub">Executive Summary · Luxury Duals · Forecast · Alerts</div>
-    </div>
-  </div>
-  <div class="memo-body">
-    <h4>Executive Summary</h4>
-    <ul id="memo-summary">
-      <li>Rolex Spread komprimiert sich – Nachfrage normalisiert.</li>
-      <li>Ferrari Nachfrage-Impulse rund um Events (Monaco GP).</li>
-      <li>Yacht 30–50m Segment mit hoher Turnover-Rate.</li>
-    </ul>
-    <h4>Key KPIs</h4>
-    <div id="memo-kpis" class="memo-kpis"></div>
-    <h4>Hinweise</h4>
-    <p>Dieses Memo wurde automatisch aus der Demo generiert. Werte sind demo-synthetisch.</p>
   </div>
 </div>
 
