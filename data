@@ -1,0 +1,26 @@
+{
+  "electronics": {
+    "time": ["-96h","-72h","-48h","-24h","Jetzt"],
+    "units": "Nachfrageindex (0–100)",
+    "legend": {
+      "Apple AirPods": "#4F46E5",
+      "Sony WH-1000XM5": "#10B981",
+      "Anker Powerbank": "#F59E0B"
+    },
+    "series": {
+      "Apple AirPods": [52,58,61,67,70],
+      "Sony WH-1000XM5": [38,44,47,53,56],
+      "Anker Powerbank": [29,35,41,48,51]
+    }
+  },
+  "fmcg": {
+    "time": ["-4w","-3w","-2w","-1w","Jetzt"],
+    "units": "Nachfrageindex (Basis=100)",
+    "series": {
+      "Energy-Drinks": [100,108,115,121,126],
+      "Protein-Riegel": [100,103,106,108,110],
+      "RTD-Kaffee": [100,101,103,104,106],
+      "Electrolyte Water": [100,105,112,118,123]
+    }
+  }
+}
