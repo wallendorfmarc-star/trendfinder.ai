@@ -1,1 +1,10 @@
-data/retail.json
+{
+  "products": ["Smartphone", "Laptop", "Tablet", "Smartwatch"],
+  "time": ["2025-09-20", "2025-09-21", "2025-09-22", "2025-09-23"],
+  "demand": [
+    [120, 150, 170, 160],   // Smartphone
+    [80, 95, 110, 130],     // Laptop
+    [60, 65, 70, 75],       // Tablet
+    [40, 55, 50, 60]        // Smartwatch
+  ]
+}
