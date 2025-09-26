@@ -1,3 +1,6 @@
+window.TF_VERSION = 'gate-7707-v3';
+console.log('[Trendfinder] Version:', window.TF_VERSION);
+
 /* ==============================
    Trendfinder v7 – app.js (Passwort=7707, Compare + Signals + Gate-Hotfix)
    ============================== */
