@@ -256,6 +256,77 @@ function setBadge(id, txt, cls){
 // (Hier folgen renderRetail, renderBeauty, renderSupp, renderFinance, renderLuxury usw. – unverändert aus meiner letzten Version, nur für Kürze nicht wiederholt.)
 
 // ===== Init =====
+// ===== Health Check =====
+const HEALTH = {
+  plotly: false,
+  files: {
+    'data/retail.json':  null,
+    'data/beauty.json':  null,
+    'data/supplements.json': null,
+    'data/finance.json': null,
+    'data/luxury.json':  null
+  },
+  dom: {
+    'elec': null, 'fmcg': null,
+    'beauty-line': null,
+    'supp-stacked': null,
+    'finance-dual': null,
+    'lux-watches': null, 'lux-autos': null, 'lux-yachts': null
+  }
+};
+
+function createHealthPanel(){
+  if (document.getElementById('healthPanel')) return;
+  const box = document.createElement('div');
+  box.id = 'healthPanel';
+  box.style.cssText = `
+    position:fixed; top:10px; right:10px; z-index:9999;
+    background:#0F1524; color:#E6ECF8; border:1px solid #24314B;
+    border-radius:10px; padding:10px 12px; font:12px/1.4 Inter,system-ui;
+    box-shadow:0 8px 24px rgba(0,0,0,.35);
+  `;
+  box.innerHTML = `<div style="font-weight:700;margin-bottom:6px">Health Check</div>
+  <div id="healthPlotly"></div>
+  <div id="healthFiles" style="margin-top:6px"></div>
+  <div id="healthDom" style="margin-top:6px"></div>`;
+  document.body.appendChild(box);
+}
+
+function updateHealthPanel(){
+  const ok = (t)=>`<span style="color:#10B981">OK</span> ${t}`;
+  const fail = (t)=>`<span style="color:#EF4444">FEHLT</span> ${t}`;
+
+  const hp = document.getElementById('healthPlotly');
+  const hf = document.getElementById('healthFiles');
+  const hd = document.getElementById('healthDom');
+  if(!hp || !hf || !hd) return;
+
+  hp.innerHTML = `<strong>Plotly:</strong> ${window.Plotly ? ok('geladen') : fail('nicht gefunden')}`;
+
+  hf.innerHTML = `<strong>Data Files:</strong><br>` + Object.entries(HEALTH.files)
+    .map(([k,v]) => (v===true ? ok(k) : v===false ? fail(k) : `… ${k}`))
+    .join('<br>');
+
+  hd.innerHTML = `<strong>DOM Targets:</strong><br>` + Object.keys(HEALTH.dom)
+    .map(id => (document.getElementById(id) ? ok('#'+id) : fail('#'+id)))
+    .join('<br>');
+}
+
+async function loadJSONChecked(path){
+  try{
+    const r = await fetch(path, {cache:'no-store'});
+    if(!r.ok) throw new Error(`${path} → HTTP ${r.status}`);
+    const j = await r.json();
+    HEALTH.files[path] = true;
+    updateHealthPanel();
+    return j;
+  }catch(err){
+    console.error('[HealthCheck] Fehler beim Laden:', path, err);
+    HEALTH.files[path] = false;
+    updateHealthPanel();
+    throw err;
+  }
+}
 document.addEventListener('DOMContentLoaded', async ()=>{
   initGate();
   initTopButtons();
