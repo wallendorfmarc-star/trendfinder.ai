@@ -1,0 +1,17 @@
+{
+  "watches": {
+    "brands": ["Rolex", "Patek Philippe", "Audemars Piguet", "Richard Mille"],
+    "msrp": [12000,30000,25000,150000],
+    "secondary": [18000,45000,40000,250000]
+  },
+  "autos": {
+    "brands": ["Ferrari", "Lamborghini", "Rolls-Royce", "Bentley"],
+    "msrp": [250000,300000,400000,220000],
+    "secondary": [280000,330000,420000,210000]
+  },
+  "yachts": {
+    "brands": ["Feadship", "Lürssen", "Benetti", "Sunseeker"],
+    "msrp": [30000000,50000000,20000000,8000000],
+    "secondary": [28000000,47000000,19000000,7500000]
+  }
+}
