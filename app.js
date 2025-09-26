@@ -1,5 +1,5 @@
 /* ==============================
-   Trendfinder v7 – app.js (Passwort=7707, Compare + Signals)
+   Trendfinder v7 – app.js (Passwort=7707, Compare + Signals + Gate-Hotfix)
    ============================== */
 
 /* ----- Helpers ----- */
@@ -11,16 +11,51 @@ const state = {
   luxury:null, portfolio:null, correlation:null, brands:null
 };
 
-/* ----- Password Gate ----- */
+/* ==============================
+   GATE (Hotfix)
+   - Passwort: 7707
+   - URL-Parameter: ?tf=7707 entsperrt direkt
+   - Merkt sich Unlock in localStorage (tf_pass_ok=1)
+============================== */
+function unlockApp() {
+  const gate = document.getElementById('gate');
+  const app  = document.getElementById('app');
+  if (gate) gate.style.display = 'none';
+  if (app)  app.style.display  = 'grid';
+  try { initialRender(); } catch(e){ console.warn('initialRender error:', e); }
+}
+
 function initGate(){
-  const gate=$('#gate'), app=$('#app');
-  const form=$('#gateForm'), inp=$('#pass'), msg=$('#gateMsg');
-  if(!form) return;
-  form.addEventListener('submit',(e)=>{
+  const form = document.getElementById('gateForm');
+  const inp  = document.getElementById('pass');
+  const msg  = document.getElementById('gateMsg');
+
+  // 1) URL-Param
+  const qp = (new URLSearchParams(location.search).get('tf') || '').trim();
+  if (qp === '7707') {
+    console.info('[Gate] Unlocked via ?tf=7707');
+    localStorage.setItem('tf_pass_ok','1');
+    unlockApp();
+    return;
+  }
+  // 2) localStorage
+  if (localStorage.getItem('tf_pass_ok') === '1') {
+    console.info('[Gate] Unlocked via localStorage');
+    unlockApp();
+    return;
+  }
+  // 3) Formular
+  if (!form) return;
+  form.addEventListener('submit', (e)=>{
     e.preventDefault();
-    const v=(inp.value||'').trim();
-    if(v==='7707'){ gate.style.display='none'; app.style.display='grid'; msg.textContent=''; initialRender(); }
-    else { msg.textContent='Falsches Passwort.'; }
+    const v = String((inp && inp.value) ? inp.value : '').trim();
+    if (v === '7707') {
+      localStorage.setItem('tf_pass_ok','1');
+      unlockApp();
+    } else {
+      if (msg) msg.textContent = 'Falsches Passwort.';
+      console.warn('[Gate] Wrong password entered');
+    }
   });
 }
 
@@ -326,6 +361,6 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   state.finance=f||Fallback.finance; state.luxury=l||Fallback.luxury; state.portfolio=p||Fallback.portfolio;
   state.correlation=c||Fallback.correlation; state.brands=br||Fallback.brands;
 
-  // Falls Gate bereits offen
+  // Falls Gate bereits offen (z. B. wenn du Gate in HTML ausgeblendet hast)
   if($('#app')?.style.display!=='none') initialRender();
 });
