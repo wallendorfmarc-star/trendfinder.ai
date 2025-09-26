@@ -1,0 +1,5 @@
+{
+  "brands": ["Rolex", "Omega", "Tag Heuer", "Cartier"],
+  "market_share": [40, 25, 20, 15],
+  "premium_vs_peers": [28, 12, 8, 5]
+}
