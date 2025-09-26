@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="de">
-  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -34,6 +33,9 @@
   <!-- Fonts & Styles -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css"/>
+
+  <!-- Plotly für interaktive Charts -->
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 </head>
 <body>
 <div id="gate" class="center">
@@ -41,10 +43,12 @@
     <img id="gateLogo" src="assets/logo.svg" alt="Tycoondata" style="height:30px"/><br/>
     <h2 style="margin:6px 0 6px">Trendfinder – Investor Demo</h2>
     <p class="helper">Bitte Passwort eingeben, um die Live-Demo zu starten.</p>
-    <form id="gateForm"><input id="pass" class="input" type="password" placeholder="Passwort (Standard: 369)" required/>
+    <form id="gateForm">
+      <!-- Passwort-Placeholder & Hilfetext aktualisiert auf 369 -->
+      <input id="pass" class="input" type="password" placeholder="Passwort (Standard: 369)" required/>
       <button class="btn primary" type="submit">🔓 Unlock</button>
     </form>
-    <p class="helper" id="gateMsg" style="margin-top:8px"></p>
+    <p class="helper" id="gateMsg" style="margin-top:8px">Tipp: Verwende 369 für Demo-Zugang.</p>
   </div>
 </div>
 
