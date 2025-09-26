@@ -1,0 +1,4 @@
+{
+  "pairs": [["Rolex", "BTC"], ["Ferrari", "Nasdaq"], ["Autos", "US10Y"]],
+  "correlation": [0.72, 0.64, 0.58]
+}
