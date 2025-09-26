@@ -1,3 +1,29 @@
+// === Brand Colors ===
+const BRAND = {
+  orange: '#FF7900',  // Trendfinder
+  blue:   '#1436AE',  // TYCOONDATA
+  gold:   '#D4AF37',  // Premium
+  teal:   '#00AEEF',  // Akzent/Subline
+  grey:   '#8892a6'
+};
+
+// Plotly Default Theme override (optional – einheitlicher Look)
+const PLOTLY_LAYOUT_BASE = {
+  margin:{l:60,r:20,t:10,b:40},
+  paper_bgcolor:'#0A0D11',
+  plot_bgcolor :'#0A0D11',
+  font:{color:'#E6ECF8', family:'Inter, system-ui, -apple-system, Segoe UI, Roboto'},
+  xaxis:{gridcolor:'#1C2230', zerolinecolor:'#1C2230', linecolor:'#2A3245'},
+  yaxis:{gridcolor:'#1C2230', zerolinecolor:'#1C2230', linecolor:'#2A3245'},
+  legend:{orientation:'h'}
+};
+
+// Helper: Layout zusammenführen
+const mergeLayout = (custom)=>Object.assign({}, PLOTLY_LAYOUT_BASE, custom);
+
+// Helper: Nummern hübsch
+const fmt = (v)=> (typeof v==='number' ? (Math.round(v*100)/100) : v);
+
 // === Util ===
 async function loadJSON(path){ const r = await fetch(path); return r.json(); }
 const fmt = (v)=> typeof v==='number' ? (Math.round(v*100)/100) : v;
