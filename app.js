@@ -256,30 +256,39 @@ function renderAllIfReady(){
 /* -------------------- Boot ---------------------- */
 document.addEventListener('DOMContentLoaded', async ()=>{
   initGate();
-  bindTabs();
-  updateHealthPanel();
+  initTopButtons();
 
   try{
-    const [ret,bea,sup,fin,lux] = await Promise.all([
-      loadJSONChecked(`${DATA_BASE}retail.json`),
-      loadJSONChecked(`${DATA_BASE}beauty.json`),
-      loadJSONChecked(`${DATA_BASE}supplements.json`),
-      loadJSONChecked(`${DATA_BASE}finance.json`),
-      loadJSONChecked(`${DATA_BASE}luxury.json`)
+    [state.retail,
+     state.beauty,
+     state.supp,
+     state.finance,
+     state.luxury,
+     state.portfolio,
+     state.correlation,
+     state.brands] = await Promise.all([
+        loadJSONChecked('data/retail.json'),
+        loadJSONChecked('data/beauty.json'),
+        loadJSONChecked('data/supplements.json'),
+        loadJSONChecked('data/finance.json'),
+        loadJSONChecked('data/luxury.json'),
+        loadJSONChecked('data/portfolio.json'),
+        loadJSONChecked('data/correlation.json'),
+        loadJSONChecked('data/brands.json')
     ]);
-    state.retail  = ret;
-    state.beauty  = bea;
-    state.supp    = sup;
-    state.finance = fin;
-    state.luxury  = lux;
-  }catch(e){
-    console.error('Daten konnten nicht vollständig geladen werden.', e);
+  }catch(err){
+    console.error('Daten konnten nicht geladen werden:', err);
   }
 
-  // Wenn kein Gate existiert (öffentliche Demo), sofort rendern
-  if (!document.getElementById('gate')) {
-    const app = document.getElementById('app');
-    if (app) app.style.display = 'grid';
-    renderAllIfReady();
+  bindTabs();
+  bindControls();
+
+  const appVisible = document.getElementById('app')?.style.display !== 'none';
+  if(appVisible) {
+    renderRetail();
+    renderPortfolio();
+    renderCorrelation();
+    renderBrands();
+    startTabTimer();
   }
 });
