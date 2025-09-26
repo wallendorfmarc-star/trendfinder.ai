@@ -1,0 +1,10 @@
+{
+  "categories": ["Protein", "Omega-3", "Ashwagandha", "Creatine"],
+  "channels": ["Amazon", "Retail", "D2C"],
+  "shares": [
+    [45,30,25],
+    [25,40,35],
+    [15,20,65],
+    [35,50,15]
+  ]
+}
