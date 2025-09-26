@@ -16,6 +16,8 @@
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
+
+<!-- Passwort Gate -->
 <div id="gate" class="center">
   <div class="gate">
     <img id="gateLogo" src="assets/logo.svg" alt="Tycoondata" style="height:30px"/><br/>
@@ -32,14 +34,145 @@
   </div>
 </div>
 
+<!-- App Container -->
 <div id="app" class="app" style="display:none">
-  <!-- deine Sidebar, Tabs, Sections etc. wie gehabt -->
+
+  <aside class="sidebar">
+    <div class="logo">
+      <img id="appLogo" src="assets/logo.svg" alt="Tycoondata"/>
+      <strong>Trendfinder</strong>
+    </div>
+    <div class="tab active" data-tab="retail">🛒 Retail</div>
+    <div class="tab" data-tab="beauty">💄 Beauty</div>
+    <div class="tab" data-tab="supplements">💊 Supplements</div>
+    <div class="tab" data-tab="finance">💹 Finance</div>
+    <div class="tab" data-tab="luxury">💎 Luxury</div>
+    <div class="tab" data-tab="portfolio">📦 Portfolio</div>
+    <div class="tab" data-tab="matrix">🧩 Correlation</div>
+    <div class="tab" data-tab="brand">📊 Brand Cockpit</div>
+
+    <div class="row">
+      <button id="share" class="btn">🔗 Share</button>
+      <button id="theme" class="btn">🌓 Theme</button>
+      <button id="memo" class="btn">📄 Export Investor Memo</button>
+      <button id="alert" class="btn">⚡ Trigger Alert (Demo)</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="header no-print">
+      <div><strong id="user">Investor Mode</strong> · <span class="mono">Realtime Trends</span> <span class="timer" id="tabTimer">Tab-Zeit: 00:00</span></div>
+      <div class="helper">Tipps: ←/→ Tabs · Export ▾ · Notes: "N" · Auto-Pitch: "P"</div>
+    </div>
+
+    <div class="content">
+      <!-- Retail -->
+      <section id="retail" class="section active">
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Electronics – Nachfrageverlauf (Live)</h3>
+              <div class="controls">
+                <select id="elec-product" class="select"></select>
+                <div class="dropdown">
+                  <button class="btn-sm dd" data-dd="elec">📥 Export ▾</button>
+                  <div class="dropdown-menu">
+                    <a data-exp="elec" data-format="csv">CSV</a>
+                    <a data-exp="elec" data-format="xls">Excel</a>
+                    <a data-exp="elec" data-format="png">PNG</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="elec-legend" class="legend"></div>
+            <div id="elec" class="plot"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>FMCG – Nachfrageindex</h3>
+            </div>
+            <div id="fmcg" class="plot"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Beauty -->
+      <section id="beauty" class="section">
+        <div class="card">
+          <div class="card-head">
+            <h3>Beauty – Nachfrage & Buzz</h3>
+            <div class="controls">
+              <select id="beauty-product" class="select"></select>
+            </div>
+          </div>
+          <div id="beauty-legend" class="legend"></div>
+          <div id="beauty-line" class="plot"></div>
+        </div>
+      </section>
+
+      <!-- Supplements -->
+      <section id="supplements" class="section">
+        <div class="card">
+          <div class="card-head">
+            <h3>Supplements – Marktanteile</h3>
+          </div>
+          <div id="supp-stacked" class="plot"></div>
+        </div>
+      </section>
+
+      <!-- Finance -->
+      <section id="finance" class="section">
+        <div class="card">
+          <div class="card-head">
+            <h3>Finance – Preis vs. Sentiment</h3>
+          </div>
+          <div id="finance-dual" class="plot"></div>
+        </div>
+      </section>
+
+      <!-- Luxury -->
+      <section id="luxury" class="section">
+        <div class="grid grid-3">
+          <div class="card"><h3>Luxury Watches</h3><div id="lux-watches" class="plot"></div></div>
+          <div class="card"><h3>Luxury Autos</h3><div id="lux-autos" class="plot"></div></div>
+          <div class="card"><h3>Luxury Yachts</h3><div id="lux-yachts" class="plot"></div></div>
+        </div>
+      </section>
+
+      <!-- Portfolio -->
+      <section id="portfolio" class="section">
+        <div class="card"><h3>Alternative Assets – Portfolio Builder</h3><div id="pf-forecast" class="plot"></div></div>
+      </section>
+
+      <!-- Correlation -->
+      <section id="matrix" class="section">
+        <div class="card"><h3>Correlation Matrix</h3><div id="matrix-grid" class="plot"></div></div>
+      </section>
+
+      <!-- Brand Cockpit -->
+      <section id="brand" class="section">
+        <div class="card">
+          <div class="card-head">
+            <h3>Brand Cockpit</h3>
+            <div class="controls">
+              <select id="brand-sel" class="select">
+                <option>Rolex</option><option>Patek Philippe</option>
+                <option>Audemars Piguet</option><option>Richard Mille</option>
+              </select>
+            </div>
+          </div>
+          <div id="brand-share" class="plot"></div>
+          <div id="brand-premium" class="plot"></div>
+        </div>
+      </section>
+    </div>
+  </main>
 </div>
 
-<!-- Modal + Memo -->
-<div id="alertModal" class="modal no-print">
+<!-- Alert Modal -->
+<div id="alertModal" class="modal no-print" style="display:none">
   <div class="modal-content">
-    <h3>⚡ Alert (Demo)</h3>
+    <h3>⚡ Alert</h3>
     <p id="alertText">Noch kein Signal</p>
     <div class="row">
       <button id="saveEML" class="btn">✉️ .eml speichern</button>
