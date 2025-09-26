@@ -4,6 +4,9 @@
    Passwort = 369
    =========================== */
 
+// ===== Konfiguration =====
+const DATA_BASE = '/data/'; // absolute Pfade, damit GitHub Pages sicher lädt
+
 // ===== Brand & Utils =====
 const BRAND = {
   orange: '#FF7900',  // Trendfinder
@@ -69,6 +72,8 @@ function initGate(){
       gate.style.display = 'none';
       app.style.display  = 'grid';
       startTabTimer();
+      // Erste Render erst nach Unlock
+      safeRender(renderRetail, 'renderRetail');
     }else{
       msg.textContent = 'Falsches Passwort. Tipp: 369';
     }
@@ -144,8 +149,8 @@ function openAlertModal(text){
 
 // ===== Data Loader =====
 async function loadJSON(path){
-  const r = await fetch(path);
-  if(!r.ok) throw new Error(`Load failed: ${path}`);
+  const r = await fetch(path, {cache:'no-store'});
+  if(!r.ok) throw new Error(`Load failed: ${path} (HTTP ${r.status})`);
   return r.json();
 }
 
@@ -155,11 +160,11 @@ async function loadJSON(path){
 const HEALTH = {
   plotly: false,
   files: {
-    'data/retail.json':  null,
-    'data/beauty.json':  null,
-    'data/supplements.json': null,
-    'data/finance.json': null,
-    'data/luxury.json':  null
+    [DATA_BASE+'retail.json']:  null,
+    [DATA_BASE+'beauty.json']:  null,
+    [DATA_BASE+'supplements.json']: null,
+    [DATA_BASE+'finance.json']: null,
+    [DATA_BASE+'luxury.json']:  null
   },
   dom: {
     'elec': null, 'fmcg': null,
@@ -209,9 +214,7 @@ function updateHealthPanel(){
 
 async function loadJSONChecked(path){
   try{
-    const r = await fetch(path, {cache:'no-store'});
-    if(!r.ok) throw new Error(`${path} → HTTP ${r.status}`);
-    const j = await r.json();
+    const j = await loadJSON(path);
     HEALTH.files[path] = true;
     updateHealthPanel();
     return j;
@@ -237,16 +240,20 @@ function bindTabs(){
 
       startTabTimer();
 
-      if(tab==='retail') renderRetail();
-      if(tab==='beauty') renderBeauty();
-      if(tab==='supplements') renderSupp();
-      if(tab==='finance') renderFinance();
-      if(tab==='luxury') renderLuxury();
-      if(tab==='portfolio') renderPortfolio && renderPortfolio();
-      if(tab==='matrix') renderMatrix && renderMatrix();
-      if(tab==='brand') renderBrand && renderBrand();
+      if(tab==='retail') safeRender(renderRetail, 'renderRetail');
+      if(tab==='beauty') safeRender(renderBeauty, 'renderBeauty');
+      if(tab==='supplements') safeRender(renderSupp, 'renderSupp');
+      if(tab==='finance') safeRender(renderFinance, 'renderFinance');
+      if(tab==='luxury') safeRender(renderLuxury, 'renderLuxury');
+      if(tab==='portfolio') renderPortfolio && safeRender(renderPortfolio, 'renderPortfolio');
+      if(tab==='matrix') renderMatrix && safeRender(renderMatrix, 'renderMatrix');
+      if(tab==='brand') renderBrand && safeRender(renderBrand, 'renderBrand');
     });
   });
+}
+
+function safeRender(fn, name){
+  try { fn(); } catch(e){ console.error(`[Render] ${name} failed:`, e); }
 }
 
 // Zeitauswahl (24/48/72/96h)
@@ -257,7 +264,7 @@ function bindControls(){
   ];
   map.forEach(([id,fn])=>{
     const el = document.getElementById(id);
-    if(el) el.addEventListener('change', fn);
+    if(el) el.addEventListener('change', ()=> safeRender(fn, id));
   });
 
   // Export-Dropdowns
@@ -266,6 +273,7 @@ function bindControls(){
   bindExportDropdown('beauty', 'beauty-line');
   bindExportDropdown('supp',   'supp-stacked');
   bindExportDropdown('fin',    'finance-dual');
+
   // Luxury PNG Controls
   const pngW = document.getElementById('png-w');
   const pngA = document.getElementById('png-a');
@@ -512,14 +520,14 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   });
   updateHealthPanel();
 
-  // Daten laden mit Health-Check
+  // Daten laden mit Health-Check und absoluten Pfaden
   try{
     [state.retail, state.beauty, state.supp, state.finance, state.luxury] = await Promise.all([
-      loadJSONChecked('data/retail.json'),
-      loadJSONChecked('data/beauty.json'),
-      loadJSONChecked('data/supplements.json'),
-      loadJSONChecked('data/finance.json'),
-      loadJSONChecked('data/luxury.json')
+      loadJSONChecked(DATA_BASE + 'retail.json'),
+      loadJSONChecked(DATA_BASE + 'beauty.json'),
+      loadJSONChecked(DATA_BASE + 'supplements.json'),
+      loadJSONChecked(DATA_BASE + 'finance.json'),
+      loadJSONChecked(DATA_BASE + 'luxury.json')
     ]);
   }catch(err){
     console.warn('Ein oder mehrere Datenquellen fehlen. Siehe Health-Panel & Konsole.');
@@ -528,9 +536,10 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   bindTabs();
   bindControls();
 
+  // Tipp: Erst rendern, wenn Gate offen ist (siehe initGate)
   const appVisible = document.getElementById('app')?.style.display !== 'none';
   if(appVisible && window.Plotly) {
-    try { renderRetail(); } catch(e){ console.error('renderRetail()', e); }
+    safeRender(renderRetail, 'renderRetail');
     startTabTimer();
   }
 });
