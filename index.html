@@ -1,185 +1,115 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Tycoondata · Trendfinder v7.0 ULTIMATE</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Trendfinder – Investor Demo</title>
 
-  <!-- 🔥 SEO / Branding -->
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <meta name="title" content="Trendfinder.ai – KI für Konsumtrends & Future Insights">
-  <meta name="description" content="Trendfinder.ai identifiziert die nächsten Billionen-Dollar-Märkte – von Consumer Products über Luxusgüter bis zu Finanzmärkten.">
+  <!-- Basis-Styles (minimal) -->
+  <style>
+    :root { color-scheme: light dark; }
+    html, body { margin:0; padding:0; height:100%; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body { background:#0e1522; color:#e9eef6; }
+    .wrap { min-height:100%; display:flex; align-items:flex-start; justify-content:center; padding:24px; }
+    .panel {
+      width:min(92vw, 420px); background:#0f1b2d; border-radius:16px; padding:20px 18px;
+      box-shadow:0 20px 40px rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.07);
+    }
+    h1 { font-size:22px; margin:0 0 8px 0; }
+    p.muted { margin:6px 0 14px 0; color:#9bb0c9; }
+    .row { display:flex; gap:8px; align-items:center; }
+    input[type="password"] {
+      flex:1; padding:12px 12px; border-radius:12px; border:1px solid #26344a; background:#0b1322; color:#e9eef6;
+      outline:none;
+    }
+    button {
+      padding:12px 14px; border:0; border-radius:12px; background:#1c66ff; color:#fff; cursor:pointer; font-weight:600;
+    }
+    #msg { min-height:18px; margin-top:10px; color:#ff6a6a; font-size:13px; }
 
-  <!-- Fonts & Styles -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css"/>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    /* App-Bereich */
+    #app { display:none; margin-left:24px; width:min(1200px, 92vw); }
+    .kpi {
+      display:grid; grid-template-columns: repeat(3, minmax(120px, 1fr)); gap:12px; margin:0 0 16px 0;
+    }
+    .card {
+      background:#0f1b2d; border:1px solid rgba(255,255,255,.07); border-radius:14px; padding:14px;
+    }
+    .kpi .label { color:#9bb0c9; font-size:12px; margin-bottom:6px; }
+    .kpi .val { font-size:20px; font-weight:700; }
+    .section { background:#0f1b2d; border:1px solid rgba(255,255,255,.07); border-radius:14px; padding:16px; }
+    .grid { display:grid; gap:16px; }
+    @media (min-width:900px){ .grid{ grid-template-columns: 1.2fr 1fr; } }
+  </style>
+
+  <!-- Plotly: nutze eine feste Version, nicht "latest" -->
+  <script src="https://cdn.plot.ly/plotly-2.33.0.min.js"></script>
+
+  <!-- jQuery (nur wenn du $ nutzt; sonst weglassen und app.js auf reines DOM umbauen) -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <noscript><style>#gate{display:none!important} .noscript{padding:20px}</style></noscript>
 </head>
 <body>
-
-<!-- Passwort Gate -->
-<div id="gate" class="center">
-  <div class="gate">
-    <img id="gateLogo" src="assets/logo.svg" alt="Tycoondata" style="height:30px"/><br/>
-    <h2 style="margin:6px 0 6px">Trendfinder – Investor Demo</h2>
-    <p class="helper">Bitte Passwort eingeben, um die Live-Demo zu starten.</p>
-    <form id="gateForm">
-      <input id="pass" class="input" type="password"
-             placeholder="Passwort" required
-             autocomplete="off" autocorrect="off" autocapitalize="off"
-             inputmode="numeric"/>
-      <button class="btn primary" type="submit">🔓 Unlock</button>
-    </form>
-    <p class="helper" id="gateMsg" style="margin-top:8px"></p>
-  </div>
-</div>
-
-<!-- App Container -->
-<div id="app" class="app" style="display:none">
-
-  <aside class="sidebar">
-    <div class="logo">
-      <img id="appLogo" src="assets/logo.svg" alt="Tycoondata"/>
-      <strong>Trendfinder</strong>
-    </div>
-    <div class="tab active" data-tab="retail">🛒 Retail</div>
-    <div class="tab" data-tab="beauty">💄 Beauty</div>
-    <div class="tab" data-tab="supplements">💊 Supplements</div>
-    <div class="tab" data-tab="finance">💹 Finance</div>
-    <div class="tab" data-tab="luxury">💎 Luxury</div>
-    <div class="tab" data-tab="portfolio">📦 Portfolio</div>
-    <div class="tab" data-tab="matrix">🧩 Correlation</div>
-    <div class="tab" data-tab="brand">📊 Brand Cockpit</div>
-
-    <div class="row">
-      <button id="share" class="btn">🔗 Share</button>
-      <button id="theme" class="btn">🌓 Theme</button>
-      <button id="memo" class="btn">📄 Export Investor Memo</button>
-      <button id="alert" class="btn">⚡ Trigger Alert (Demo)</button>
-    </div>
-  </aside>
-
-  <main class="main">
-    <div class="header no-print">
-      <div><strong id="user">Investor Mode</strong> · <span class="mono">Realtime Trends</span> <span class="timer" id="tabTimer">Tab-Zeit: 00:00</span></div>
-      <div class="helper">Tipps: ←/→ Tabs · Export ▾ · Notes: "N" · Auto-Pitch: "P"</div>
-    </div>
-
-    <div class="content">
-      <!-- Retail -->
-      <section id="retail" class="section active">
-        <div class="grid grid-2">
-          <div class="card">
-            <div class="card-head">
-              <h3>Electronics – Nachfrageverlauf (Live)</h3>
-              <div class="controls">
-                <select id="elec-product" class="select"></select>
-                <div class="dropdown">
-                  <button class="btn-sm dd" data-dd="elec">📥 Export ▾</button>
-                  <div class="dropdown-menu">
-                    <a data-exp="elec" data-format="csv">CSV</a>
-                    <a data-exp="elec" data-format="xls">Excel</a>
-                    <a data-exp="elec" data-format="png">PNG</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="elec-legend" class="legend"></div>
-            <div id="elec" class="plot"></div>
-          </div>
-          <div class="card">
-            <div class="card-head">
-              <h3>FMCG – Nachfrageindex</h3>
-            </div>
-            <div id="fmcg" class="plot"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Beauty -->
-      <section id="beauty" class="section">
-        <div class="card">
-          <div class="card-head">
-            <h3>Beauty – Nachfrage & Buzz</h3>
-            <div class="controls">
-              <select id="beauty-product" class="select"></select>
-            </div>
-          </div>
-          <div id="beauty-legend" class="legend"></div>
-          <div id="beauty-line" class="plot"></div>
-        </div>
-      </section>
-
-      <!-- Supplements -->
-      <section id="supplements" class="section">
-        <div class="card">
-          <div class="card-head">
-            <h3>Supplements – Marktanteile</h3>
-          </div>
-          <div id="supp-stacked" class="plot"></div>
-        </div>
-      </section>
-
-      <!-- Finance -->
-      <section id="finance" class="section">
-        <div class="card">
-          <div class="card-head">
-            <h3>Finance – Preis vs. Sentiment</h3>
-          </div>
-          <div id="finance-dual" class="plot"></div>
-        </div>
-      </section>
-
-      <!-- Luxury -->
-      <section id="luxury" class="section">
-        <div class="grid grid-3">
-          <div class="card"><h3>Luxury Watches</h3><div id="lux-watches" class="plot"></div></div>
-          <div class="card"><h3>Luxury Autos</h3><div id="lux-autos" class="plot"></div></div>
-          <div class="card"><h3>Luxury Yachts</h3><div id="lux-yachts" class="plot"></div></div>
-        </div>
-      </section>
-
-      <!-- Portfolio -->
-      <section id="portfolio" class="section">
-        <div class="card"><h3>Alternative Assets – Portfolio Builder</h3><div id="pf-forecast" class="plot"></div></div>
-      </section>
-
-      <!-- Correlation -->
-      <section id="matrix" class="section">
-        <div class="card"><h3>Correlation Matrix</h3><div id="matrix-grid" class="plot"></div></div>
-      </section>
-
-      <!-- Brand Cockpit -->
-      <section id="brand" class="section">
-        <div class="card">
-          <div class="card-head">
-            <h3>Brand Cockpit</h3>
-            <div class="controls">
-              <select id="brand-sel" class="select">
-                <option>Rolex</option><option>Patek Philippe</option>
-                <option>Audemars Piguet</option><option>Richard Mille</option>
-              </select>
-            </div>
-          </div>
-          <div id="brand-share" class="plot"></div>
-          <div id="brand-premium" class="plot"></div>
-        </div>
-      </section>
-    </div>
-  </main>
-</div>
-
-<!-- Alert Modal -->
-<div id="alertModal" class="modal no-print" style="display:none">
-  <div class="modal-content">
-    <h3>⚡ Alert</h3>
-    <p id="alertText">Noch kein Signal</p>
-    <div class="row">
-      <button id="saveEML" class="btn">✉️ .eml speichern</button>
-      <button id="closeAlert" class="btn">Schließen</button>
+  <!-- Password Gate -->
+  <div id="gate" class="wrap" aria-hidden="false">
+    <div class="panel" role="dialog" aria-labelledby="gate-title" aria-describedby="gate-desc">
+      <div style="display:inline-block;padding:4px 10px;border-radius:999px;background:#0b244b;color:#9ec1ff;font-size:12px;margin-bottom:8px;">
+        TYCOONDATA
+      </div>
+      <h1 id="gate-title">Trendfinder – Investor Demo</h1>
+      <p id="gate-desc" class="muted">Bitte Passwort eingeben, um die Live-Demo zu starten.</p>
+      <div class="row">
+        <input id="pw" type="password" placeholder="Passwort" autocomplete="current-password" inputmode="numeric">
+        <button id="loginBtn">Unlock</button>
+      </div>
+      <p id="msg"></p>
     </div>
   </div>
-</div>
-<script src="app.js?v=20250926-1900"></script>
+
+  <!-- App Container -->
+  <div id="app" class="wrap" aria-hidden="true">
+    <div class="panel" style="position:sticky; top:24px; align-self:flex-start;">
+      <h1>Portfolio-Übersicht</h1>
+      <div class="kpi">
+        <div class="card">
+          <div class="label">Spread</div>
+          <div class="val" id="pf-spread">—</div>
+        </div>
+        <div class="card">
+          <div class="label">Liquidity</div>
+          <div class="val" id="pf-liq">—</div>
+        </div>
+        <div class="card">
+          <div class="label">Volume</div>
+          <div class="val" id="pf-vol">—</div>
+        </div>
+      </div>
+      <p class="muted">KPIs werden nach Login &amp; Datenladung aktualisiert.</p>
+    </div>
+
+    <div style="flex:1; max-width:900px;">
+      <div class="grid">
+        <div class="section">
+          <h2 style="margin:0 0 10px 0; font-size:18px;">Chart</h2>
+          <div id="chart-main" style="height:420px;"></div>
+        </div>
+        <div class="section">
+          <h2 style="margin:0 0 10px 0; font-size:18px;">Order Book</h2>
+          <div id="orderbook" style="height:420px; overflow:auto;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Optional: Alert Modal -->
+  <div id="alertModal" class="noscript" style="display:none;"></div>
+
+  <!-- Deine App-Logik -->
+  <!-- Tipp: Cache-Busting-Query anpassen, wenn du neu deployst -->
+  <script src="app.js?v=20250926-2350"></script>
 </body>
 </html>
