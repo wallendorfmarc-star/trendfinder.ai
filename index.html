@@ -1,115 +1,53 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Trendfinder – Investor Demo</title>
-
-  <!-- Basis-Styles (minimal) -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Trendfinder – Live Demo</title>
+  <link rel="icon" href="favicon.ico" />
   <style>
-    :root { color-scheme: light dark; }
-    html, body { margin:0; padding:0; height:100%; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    body { background:#0e1522; color:#e9eef6; }
-    .wrap { min-height:100%; display:flex; align-items:flex-start; justify-content:center; padding:24px; }
-    .panel {
-      width:min(92vw, 420px); background:#0f1b2d; border-radius:16px; padding:20px 18px;
-      box-shadow:0 20px 40px rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.07);
-    }
-    h1 { font-size:22px; margin:0 0 8px 0; }
-    p.muted { margin:6px 0 14px 0; color:#9bb0c9; }
-    .row { display:flex; gap:8px; align-items:center; }
-    input[type="password"] {
-      flex:1; padding:12px 12px; border-radius:12px; border:1px solid #26344a; background:#0b1322; color:#e9eef6;
-      outline:none;
-    }
-    button {
-      padding:12px 14px; border:0; border-radius:12px; background:#1c66ff; color:#fff; cursor:pointer; font-weight:600;
-    }
-    #msg { min-height:18px; margin-top:10px; color:#ff6a6a; font-size:13px; }
-
-    /* App-Bereich */
-    #app { display:none; margin-left:24px; width:min(1200px, 92vw); }
-    .kpi {
-      display:grid; grid-template-columns: repeat(3, minmax(120px, 1fr)); gap:12px; margin:0 0 16px 0;
-    }
-    .card {
-      background:#0f1b2d; border:1px solid rgba(255,255,255,.07); border-radius:14px; padding:14px;
-    }
-    .kpi .label { color:#9bb0c9; font-size:12px; margin-bottom:6px; }
-    .kpi .val { font-size:20px; font-weight:700; }
-    .section { background:#0f1b2d; border:1px solid rgba(255,255,255,.07); border-radius:14px; padding:16px; }
-    .grid { display:grid; gap:16px; }
-    @media (min-width:900px){ .grid{ grid-template-columns: 1.2fr 1fr; } }
+    /* very small, neutral styling so it just works */
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:0; background:#f6f7fb; color:#111; }
+    .center { display:flex; align-items:center; justify-content:center; height:100vh; }
+    .card { background:#fff; padding:28px; border-radius:10px; box-shadow:0 8px 30px rgba(12,20,40,0.08); width:420px; max-width:92%; text-align:center; }
+    input[type="password"]{ width:100%; padding:10px 12px; margin:12px 0; border-radius:6px; border:1px solid #d6dbe9; font-size:16px; }
+    button { padding:10px 16px; border-radius:8px; border:0; background:#0b63d6; color:#fff; font-weight:600; cursor:pointer;}
+    .hidden{ display:none; }
+    .msg { color:#c00; margin-top:8px; font-size:14px; }
+    .ok { color:green; margin-top:8px; }
+    #mainContent { padding:28px; }
+    small { color:#666 }
   </style>
-
-  <!-- Plotly: nutze eine feste Version, nicht "latest" -->
-  <script src="https://cdn.plot.ly/plotly-2.33.0.min.js"></script>
-
-  <!-- jQuery (nur wenn du $ nutzt; sonst weglassen und app.js auf reines DOM umbauen) -->
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-  <noscript><style>#gate{display:none!important} .noscript{padding:20px}</style></noscript>
 </head>
 <body>
-  <!-- Password Gate -->
-  <div id="gate" class="wrap" aria-hidden="false">
-    <div class="panel" role="dialog" aria-labelledby="gate-title" aria-describedby="gate-desc">
-      <div style="display:inline-block;padding:4px 10px;border-radius:999px;background:#0b244b;color:#9ec1ff;font-size:12px;margin-bottom:8px;">
-        TYCOONDATA
+  <!-- Password modal / landing -->
+  <main id="landing" class="center">
+    <div class="card" role="dialog" aria-labelledby="title">
+      <h2 id="title">TYCOONDATA — Trendfinder Demo</h2>
+      <p><small>Bitte Passwort eingeben, um die Live‑Demo zu starten.</small></p>
+      <input id="pwInput" type="password" placeholder="Passwort" aria-label="Passwort eingeben" />
+      <div style="display:flex; gap:8px; justify-content:center;">
+        <button id="unlockBtn">Unlock</button>
+        <button id="demoBtn" title="Test: auto-fill mit ?pw=7707">Quick Test</button>
       </div>
-      <h1 id="gate-title">Trendfinder – Investor Demo</h1>
-      <p id="gate-desc" class="muted">Bitte Passwort eingeben, um die Live-Demo zu starten.</p>
-      <div class="row">
-        <input id="pw" type="password" placeholder="Passwort" autocomplete="current-password" inputmode="numeric">
-        <button id="loginBtn">Unlock</button>
-      </div>
-      <p id="msg"></p>
+      <div id="msg" class="msg" aria-live="polite"></div>
+      <div style="margin-top:14px;"><small>Version: simple client password — 7707</small></div>
     </div>
-  </div>
+  </main>
 
-  <!-- App Container -->
-  <div id="app" class="wrap" aria-hidden="true">
-    <div class="panel" style="position:sticky; top:24px; align-self:flex-start;">
-      <h1>Portfolio-Übersicht</h1>
-      <div class="kpi">
-        <div class="card">
-          <div class="label">Spread</div>
-          <div class="val" id="pf-spread">—</div>
-        </div>
-        <div class="card">
-          <div class="label">Liquidity</div>
-          <div class="val" id="pf-liq">—</div>
-        </div>
-        <div class="card">
-          <div class="label">Volume</div>
-          <div class="val" id="pf-vol">—</div>
-        </div>
-      </div>
-      <p class="muted">KPIs werden nach Login &amp; Datenladung aktualisiert.</p>
-    </div>
-
-    <div style="flex:1; max-width:900px;">
-      <div class="grid">
-        <div class="section">
-          <h2 style="margin:0 0 10px 0; font-size:18px;">Chart</h2>
-          <div id="chart-main" style="height:420px;"></div>
-        </div>
-        <div class="section">
-          <h2 style="margin:0 0 10px 0; font-size:18px;">Order Book</h2>
-          <div id="orderbook" style="height:420px; overflow:auto;"></div>
-        </div>
+  <!-- Main content (hidden until unlocked) -->
+  <section id="mainContent" class="hidden">
+    <div style="padding:28px;">
+      <h1>Trendfinder — Live Demo (Unlocked)</h1>
+      <p>Willkommen — die Demo ist freigeschaltet.</p>
+      <p><button id="lockBtn">Lock Demo</button></p>
+      <!-- Hier kommt dein bestehender Inhalt rein (Charts, App UI etc.) -->
+      <div id="appArea">
+        <p><em>Hier kannst du den echten Demo‑Inhalt platzieren (charts, data, etc.).</em></p>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Optional: Alert Modal -->
-  <div id="alertModal" class="noscript" style="display:none;"></div>
-
-  <!-- Deine App-Logik -->
-  <!-- Tipp: Cache-Busting-Query anpassen, wenn du neu deployst -->
-<script src="app.js?v=20250926-2359"></script>
+  <script src="app.js"></script>
 </body>
 </html>
